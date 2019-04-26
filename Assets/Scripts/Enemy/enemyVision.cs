@@ -6,13 +6,12 @@ public class enemyVision : MonoBehaviour
 {
     public static bool playerDetect;        //Tag for when player is detected
     public static Vector3 lastSighting;     //last sighting of the player
-    public float fieldOfView = 170f;        //Enemy's field of view angle (cone shape)
+    public float fieldOfView;               //Enemy's field of view angle (cone shape)
     public float visionRange;               //Max vision range
-
 
     SphereCollider vision;
     
-    private GameObject player;           //Reference to the player
+    private GameObject player;              //Reference to the player's child gameObject Detection
 
     // Start is called before the first frame update
     void Start()
@@ -20,15 +19,13 @@ public class enemyVision : MonoBehaviour
         playerDetect = false;
         vision = GetComponent<SphereCollider>();
         vision.radius = visionRange;
-        player = GameObject.FindGameObjectWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("Player").transform.Find("Detection").gameObject;
     }
 
-    void OnTriggerStay(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (other.gameObject == player)
         {
-            playerDetect = false;
-
             Vector3 direction = other.transform.position - transform.position;
             float angle = Vector3.Angle(direction, transform.forward);
 
@@ -47,5 +44,11 @@ public class enemyVision : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject == player)
+            playerDetect = false;
     }
 }
